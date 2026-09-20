@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CodeCheck - Plagiarism Analysis Result</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+
+        .header {
+            padding: 35px 0 25px;
+        }
+
+        .brand {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .subtitle {
+            margin-top: 5px;
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+        /* MAIN CARD */
+
+        .main-card {
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        .title {
+            text-align: center;
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .description {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        /* SCORE */
+
+        .score-section {
+            text-align: center;
+            padding: 30px;
+            border-radius: 16px;
+            background: #f8fafc;
+            margin-bottom: 30px;
+        }
+
+        .score {
+            font-size: 56px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .score-label {
+            margin-top: 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .score-description {
+            margin-top: 8px;
+            color: #6b7280;
+        }
+
+        /* DETAIL GRID */
+
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 18px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 35px;
+        }
+
+        .detail-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 20px;
+            background: white;
+        }
+
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .detail-name {
+            font-weight: 600;
+        }
+
+        .detail-value {
+            font-weight: 700;
+        }
+
+        .progress {
+            width: 100%;
+            height: 9px;
+            background: #e5e7eb;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 20px;
+            background: #111827;
+            transition: width 0.7s ease;
+        }
+
+        /* TRANSFORMATIONS */
+
+        .transformations {
+            margin-bottom: 35px;
+        }
+
+        .transformation-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .transformation-item {
+            padding: 13px 16px;
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+        }
+
+        .transformation-item::before {
+            content: "✓";
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        /* CODE COMPARISON */
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .code-card {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .code-header {
+            padding: 15px 18px;
+            background: #f8fafc;
+            font-weight: 600;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        pre {
+            padding: 20px;
+            background: #111827;
+            color: #f9fafb;
+            overflow-x: auto;
+            min-height: 180px;
+            font-family: Consolas, Monaco, monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* BUTTON */
+
+        .button-container {
+            text-align: center;
+            margin-top: 35px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 13px 24px;
+            background: #111827;
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        /* FOOTER */
+
+        .footer {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 13px;
+            padding: 10px 0 35px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 750px) {
+
+            .main-card {
+                padding: 22px;
+            }
+
+            .details-grid,
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .score {
+                font-size: 44px;
+            }
+
+            .title {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+
+        <header class="header">
+            <div class="brand">CodeCheck</div>
+            <div class="subtitle">Code Plagiarism Detector</div>
+        </header>
+
+
+        <!-- MAIN -->
+
+        <main class="main-card">
+
+            <h1 class="title">
+                Plagiarism Analysis Result
+            </h1>
+
+            <p class="description">
+                Your uploaded code files have been analyzed successfully.
+            </p>
+
+
+            <!-- OVERALL SCORE -->
+
+            <section class="score-section">
+
+                <div class="score">
+                    {{ similarity }}%
+                </div>
+
+                {% if similarity >= 70 %}
+
+                    <div class="score-label">
+                        High Similarity
+                    </div>
+
+                    <div class="score-description">
+                        The two files contain a high amount of matching code.
+                    </div>
+
+                {% elif similarity >= 40 %}
+
+                    <div class="score-label">
+                        Moderate Similarity
+                    </div>
+
+                    <div class="score-description">
+                        The two files contain a noticeable amount of similar code.
+                    </div>
+
+                {% else %}
+
+                    <div class="score-label">
+                        Low Similarity
+                    </div>
+
+                    <div class="score-description">
+                        The two files contain relatively little similar code.
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+
+            <!-- DETAILED ANALYSIS -->
+
+            <section>
+
+                <h2 class="section-title">
+                    Detailed Analysis
+                </h2>
+
+                <div class="details-grid">
+
+
+                    <!-- TOKEN -->
+
+                    <div class="detail-card">
+
+                        <div class="detail-header">
+
+                            <span class="detail-name">
+                                🔤 Token Similarity
+                            </span>
+
+                            <span class="detail-value">
+                                {{ token_score }}%
+                            </span>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-fill"
+                                data-progress="{{ token_score }}">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- VARIABLE -->
+
+                    <div class="detail-card">
+
+                        <div class="detail-header">
+
+                            <span class="detail-name">
+                                🔄 Variable Similarity
+                            </span>
+
+                            <span class="detail-value">
+                                {{ variable_score }}%
+                            </span>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-fill"
+                                data-progress="{{ variable_score }}">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STRUCTURE -->
+
+                    <div class="detail-card">
+
+                        <div class="detail-header">
+
+                            <span class="detail-name">
+                                🧩 Structure Similarity
+                            </span>
+
+                            <span class="detail-value">
+                                {{ structure_score }}%
+                            </span>
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-fill"
+                                data-progress="{{ structure_score }}">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- FUNCTION -->
+
+                    <div class="detail-card">
+
+                        <div class="detail-header">
+
+                            <span class="detail-name">
+                                🔧 Function Similarity
+                            </span>
+
+                            {% if function_score is none %}
+
+                                <span class="detail-value">
+                                    N/A
+                                </span>
+
+                            {% else %}
+
+                                <span class="detail-value">
+                                    {{ function_score }}%
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div class="progress">
+
+                            <div
+                                class="progress-fill"
+                                data-progress="{% if function_score is none %}0{% else %}{{ function_score }}{% endif %}">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- TRANSFORMATIONS -->
+
+            <section class="transformations">
+
+                <h2 class="section-title">
+                    🔍 Detected Transformations
+                </h2>
+
+                <ul class="transformation-list">
+
+                    {% for transformation in transformations %}
+
+                        <li class="transformation-item">
+                            {{ transformation }}
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </section>
+
+
+            <!-- CODE COMPARISON -->
+
+            <section>
+
+                <h2 class="section-title">
+                    💻 Code Comparison
+                </h2>
+
+                <div class="comparison-grid">
+
+
+                    <!-- FILE 1 -->
+
+                    <div class="code-card">
+
+                        <div class="code-header">
+                            📄 {{ file1 }}
+                        </div>
+
+                        <pre>{{ code1 }}</pre>
+
+                    </div>
+
+
+                    <!-- FILE 2 -->
+
+                    <div class="code-card">
+
+                        <div class="code-header">
+                            📄 {{ file2 }}
+                        </div>
+
+                        <pre>{{ code2 }}</pre>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ANALYSIS NOTE -->
+
+            <section style="margin-top: 30px;">
+
+                <div
+                    style="
+                    padding: 18px;
+                    background: #f8fafc;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 12px;
+                    color: #6b7280;
+                    line-height: 1.6;
+                    "
+                >
+
+                    <strong style="color: #374151;">
+                        🔍 Analysis Note
+                    </strong>
+
+                    <br>
+
+                    The overall score combines token, variable-aware,
+                    structural, and function-level similarity measurements.
+                    Detected transformations provide additional context for
+                    reviewing the result. The score is an indicator for
+                    further review and is not definitive proof of plagiarism.
+
+                </div>
+
+            </section>
+
+
+            <!-- BACK BUTTON -->
+
+            <div class="button-container">
+
+                <a
+                    href="/"
+                    class="back-button"
+                >
+                    ↩ Check Another Pair
+                </a>
+
+            </div>
+
+        </main>
+
+
+        <!-- FOOTER -->
+
+        <footer class="footer">
+            CodeCheck — Code Plagiarism Detection System
+        </footer>
+
+    </div>
+
+
+    <!-- PROGRESS BAR SCRIPT -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const progressBars =
+                    document.querySelectorAll(
+                        ".progress-fill"
+                    );
+
+                progressBars.forEach(
+                    function (bar) {
+
+                        const value =
+                            parseFloat(
+                                bar.getAttribute(
+                                    "data-progress"
+                                )
+                            );
+
+                        if (!isNaN(value)) {
+
+                            const safeValue =
+                                Math.max(
+                                    0,
+                                    Math.min(
+                                        100,
+                                        value
+                                    )
+                                );
+
+                            bar.style.width =
+                                safeValue + "%";
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>

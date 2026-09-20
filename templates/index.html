@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Code Plagiarism Detector</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">CodeCheck</div>
+        <div class="tagline">Code Plagiarism Detector</div>
+    </header>
+
+
+    <main>
+
+        <section class="hero">
+
+            <h1>Detect Code Similarity</h1>
+
+            <p>
+                Upload two source-code files and analyze their similarity
+                using intelligent code comparison.
+            </p>
+
+        </section>
+
+
+        <form action="/compare" method="POST" enctype="multipart/form-data">
+
+            <section class="upload-container">
+
+
+                <!-- FILE 1 -->
+
+                <div class="file-box">
+
+                    <h2>Code File 1</h2>
+
+                    <p>Select the first source-code file</p>
+
+                    <input
+                        type="file"
+                        id="file1"
+                        name="file1"
+                        required
+                        onchange="showFileName('file1', 'fileName1')"
+                    >
+
+                    <label for="file1" class="upload-button">
+                        Choose File
+                    </label>
+
+                    <p id="fileName1" class="selected-file"></p>
+
+                </div>
+
+
+                <!-- FILE 2 -->
+
+                <div class="file-box">
+
+                    <h2>Code File 2</h2>
+
+                    <p>Select the second source-code file</p>
+
+                    <input
+                        type="file"
+                        id="file2"
+                        name="file2"
+                        required
+                        onchange="showFileName('file2', 'fileName2')"
+                    >
+
+                    <label for="file2" class="upload-button">
+                        Choose File
+                    </label>
+
+                    <p id="fileName2" class="selected-file"></p>
+
+                </div>
+
+            </section>
+
+
+            <button type="submit" class="check-button">
+                Check Plagiarism
+            </button>
+
+        </form>
+
+
+        <p class="info">
+            Supported files: .py, .java, .c, .cpp, .js
+        </p>
+
+    </main>
+
+
+    <footer>
+        CodeCheck — Code Plagiarism Detection System
+    </footer>
+
+
+    <!-- Show selected file name -->
+
+    <script>
+
+        function showFileName(inputId, outputId) {
+
+            const input = document.getElementById(inputId);
+
+            const output = document.getElementById(outputId);
+
+            if (input.files.length > 0) {
+
+                output.innerHTML =
+                    "✅ " + input.files[0].name;
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
